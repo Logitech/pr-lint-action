@@ -2,15 +2,15 @@
 
 A GitHub Action that verifies your pull request contains a reference to a ticket.  You can use this to (optionally) check:
 
-* The PR title contains `[PROJ-1234]`
-* The branch name contains `PROJ-1234` or `PROJ_1234`
-* Each commit contains `[PROJ-1234]`
+* The PR title contains `[VC-1234]`
+* The branch name contains `VC-1234` or `VC_1234`
+* Each commit contains `[VC-1234]`
 
 
 
 ## Usage
 
-Add `.github/workflows/main.yml` with the following:
+Add `.github/workflows/jiracheck.yml` with the following:
 
 ```
 name: PR Lint
@@ -19,7 +19,7 @@ jobs:
   pr_lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: vijaykramesh/pr-lint-action@v1.0
+    - uses: Logitech/vc-pr-jira-action@v1.2
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -27,12 +27,12 @@ jobs:
 
 ## Configuration
 
-Configure by creating a `.github/pr-lint.yml` file:
+Configure by creating a `.github/jira_config.yml` file:
 
 For example:
 
 ```yml
-projects: ['PROJ', 'ABC']
+tickets: ['VC', 'JIRA']
 check_title: true
 check_branch: true
 check_commits: true
@@ -41,7 +41,7 @@ ignore_case: true
 
 ## Testing
 
-Run `jest test` to test:
+Run `jest test` or `npm test` to test:
 
 ```
 PASS  ./index.test.js
