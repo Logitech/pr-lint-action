@@ -6,7 +6,6 @@
     "start": "node ./index.js"
   },
   "dependencies": {
-    "test": "jest",
     "actions-toolkit": "^2.0.0"
   },
   "devDependencies": {
