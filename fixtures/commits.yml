@@ -1,4 +1,4 @@
-projects: ['PROJ']
+tickets: ['VC']
 check_title: false
 check_branch: false
 check_commits: true

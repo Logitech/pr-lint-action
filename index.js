@@ -1,14 +1,14 @@
 const { Toolkit } = require('actions-toolkit')
 const getConfig = require('./utils/config')
 
-const CONFIG_FILENAME = 'pr-lint.yml'
+const CONFIG_FILENAME = 'jira_config.yml'
 
 const defaults = {
-  projects: ['PROJ'],
+  tickets: ['VC'],
   check_title: true,
   check_branch: false,
   check_commits: false,
-  ignore_case: false
+  ignore_case: true
 }
 
 Toolkit.run(
@@ -34,12 +34,12 @@ Toolkit.run(
       pull_request.head.ref.toLowerCase() :
       pull_request.head.ref
 
-    const projects = config.projects.map(project => config.ignore_case ? project.toLowerCase() : project)
+    const tickets = config.tickets.map(project => config.ignore_case ? project.toLowerCase() : project)
     const title_passed = (() => {
       if (config.check_title) {
-        // check the title matches [PROJECT-1234] somewhere
-        if (!projects.some(project => title.match(createWrappedProjectRegex(project)))) {
-          tools.log('PR title ' + title + ' does not contain approved project')
+        // check the title matches [VC-1234] somewhere
+        if (!tickets.some(project => title.match(createWrappedProjectRegex(project)))) {
+          tools.log('PR title ' + title + ' does not contain approved Jiras')
           return false
         }
       }
@@ -47,10 +47,10 @@ Toolkit.run(
     })()
 
     const branch_passed = (() => {
-      // check the branch matches PROJECT-1234 or PROJECT_1234 somewhere
+      // check the branch matches VC-1234 or VC_1234 somewhere
       if (config.check_branch) {
-        if (!projects.some(project => head_branch.match(createProjectRegex(project)))) {
-          tools.log('PR branch ' + head_branch + ' does not contain an approved project')
+        if (!tickets.some(project => head_branch.match(createProjectRegex(project)))) {
+          tools.log('PR branch ' + head_branch + ' does not contain an approved Jiras')
           return false
         }
       }
@@ -58,7 +58,7 @@ Toolkit.run(
     })()
 
     const commits_passed = await (async () => {
-      // check the branch matches PROJECT-1234 or PROJECT_1234 somewhere
+      // check the branch matches VC-1234 or VC_1234 somewhere
       if (config.check_commits) {
         const listCommitsParams = {
           owner: repository.owner.login,
@@ -66,11 +66,11 @@ Toolkit.run(
           pull_number: pull_request.number
         }
         const commitsInPR = (await tools.github.pulls.listCommits(listCommitsParams)).data
-        const failedCommits = findFailedCommits(projects, commitsInPR, config.ignore_case);
+        const failedCommits = findFailedCommits(tickets, commitsInPR, config.ignore_case);
 
         if(failedCommits.length) {
           failedCommits.forEach(
-            failedCommit => tools.log('Commit message \'' + failedCommit + '\' does not contain an approved project')
+            failedCommit => tools.log('Commit message \'' + failedCommit + '\' does not contain an approved Jiras')
           )
           return false
         }
@@ -100,9 +100,9 @@ Toolkit.run(
   { event: ['pull_request.opened', 'pull_request.edited', 'pull_request.synchronize'], secrets: ['GITHUB_TOKEN'] }
 )
 
-function findFailedCommits(projects, commitsInPR, ignoreCase) {
+function findFailedCommits(tickets, commitsInPR, ignoreCase) {
   const failedCommits = [];
-  projects.forEach(project => {
+  tickets.forEach(project => {
     commitsInPR.forEach(commit => {
       const commitMessage = ignoreCase ? commit.commit.message.toLowerCase() : commit.commit.message
       if (!commitMessage.match(createProjectRegex(project))) {

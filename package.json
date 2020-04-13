@@ -1,11 +1,12 @@
 {
-  "name": "pr-lint-action",
+  "name": "jira-check-action",
   "private": true,
   "main": "index.js",
   "scripts": {
     "start": "node ./index.js"
   },
   "dependencies": {
+    "test": "jest",
     "actions-toolkit": "^2.0.0"
   },
   "devDependencies": {
