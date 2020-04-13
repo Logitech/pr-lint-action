@@ -4,7 +4,7 @@ const { Toolkit } = require('actions-toolkit')
 
 nock.disableNetConnect()
 
-describe('pr-lint-action', () => {
+describe('jira-check-action', () => {
   let action, tools
 
   // Mock Toolkit.run to define `action` so we can call it
