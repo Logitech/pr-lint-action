@@ -80,16 +80,17 @@ Toolkit.run(
 
     const statuses = [title_passed, branch_passed, commits_passed]
 
-    const checks = await tools.github.checks.listForRef(Object.assign({'status': 'completed'}, repoInfo))
-    const promises = checks.data.check_runs.filter(check_run => check_run.name === "pr_lint").map(async (check_run) => {
-      await tools.github.checks.update({
-        owner: repository.owner.login,
-        repo: repository.name,
-        check_run_id: check_run.id,
-        conclusion: 'neutral',
+    await tools.github.checks.listForRef(Object.assign({'status': 'completed'}, repoInfo))
+      .check_runs
+      .filter(check_run => {check_run.name === "pr_lint"})
+      .forEach(check_run => {
+        tools.github.checks.update({
+          owner: repository.owner.login,
+          repo: repository.name,
+          check_run_id: check_run.id,
+          conclusion: 'cancelled',
+        })
       })
-    })
-    await Promise.all(promises)
 
     if (statuses.some(status => status === false )){
       tools.exit.failure("PR Linting Failed")
