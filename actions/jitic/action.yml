@@ -1,0 +1,29 @@
+name: 'jitic - JIRA Ticket Checker'
+description: 'Checks the existence of one or more issues in the JIRA issue tracker. If the issue exists we will shutdown with exit code 0. Otherwise with 1.'
+inputs:
+  url:
+    description: 'JIRA instance URL (format: scheme://[username[:password]@]host[:port]/).'
+    required: false
+    default: https://jira.logitech.com/
+  issues:
+    description: Message to retrieve the issues from.
+    required: true
+  user:
+    description: JIRA Username.
+    required: true
+  pass:
+    description: JIRA Password.
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - jitic
+    - -url
+    - '${{ inputs.url }}'
+    - -user
+    - '${{ inputs.user }}'
+    - -pass
+    - '${{ inputs.pass }}'
+    - -issues
+    - '${{ inputs.issues }}'
