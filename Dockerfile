@@ -1,4 +1,4 @@
-FROM node:slim
+FROM node:14-slim
 
 # Labels for GitHub to read your action
 LABEL "com.github.actions.name"="PR Lint Action"
